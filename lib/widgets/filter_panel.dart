@@ -66,9 +66,22 @@ class FilterPanel extends StatelessWidget {
       width: 220,
       child: DropdownButtonFormField<T>(
         initialValue: value,
+        isExpanded: true,
         items: values
             .map(
               (item) => DropdownMenuItem(value: item, child: Text(text(item))),
+            )
+            .toList(),
+        selectedItemBuilder: (context) => values
+            .map(
+              (item) => Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  text(item),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             )
             .toList(),
         onChanged: onChanged,

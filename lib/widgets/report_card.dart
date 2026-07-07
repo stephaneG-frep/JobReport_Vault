@@ -11,35 +11,90 @@ class ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      child: ListTile(
+      child: InkWell(
         onTap: onTap,
-        leading: CircleAvatar(
-          child: Text(report.title.characters.first.toUpperCase()),
-        ),
-        title: Text(report.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text(
-          '${report.type.label} • ${DateFormat('dd/MM/yyyy HH:mm').format(report.date)}\n'
-          '${report.company.name.isEmpty ? 'Sans entreprise' : report.company.name} • ${report.result}',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        trailing: Wrap(
-          spacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Chip(
-              label: Text(report.status.label),
-              visualDensity: VisualDensity.compact,
-            ),
-            Icon(
-              _priorityIcon(report.priority),
-              color: _priorityColor(report.priority),
-            ),
-          ],
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(child: Text(_initial)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          report.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${report.type.label} • ${DateFormat('dd/MM/yyyy HH:mm').format(report.date)}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    _priorityIcon(report.priority),
+                    color: _priorityColor(report.priority),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                '${report.company.name.isEmpty ? 'Sans entreprise' : report.company.name} • ${report.result.isEmpty ? 'Sans résultat' : report.result}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Chip(
+                    label: Text(report.status.label),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  Chip(
+                    avatar: Icon(
+                      _priorityIcon(report.priority),
+                      size: 16,
+                      color: _priorityColor(report.priority),
+                    ),
+                    label: Text(report.priority.label),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  if (report.tags.isNotEmpty)
+                    Chip(
+                      label: Text(report.tags.first),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  String get _initial {
+    final trimmed = report.title.trim();
+    return trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
   }
 
   IconData _priorityIcon(ReportPriority priority) => switch (priority) {

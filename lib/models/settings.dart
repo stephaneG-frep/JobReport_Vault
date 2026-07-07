@@ -1,6 +1,19 @@
+enum VaultThemeChoice {
+  light,
+  greenNight,
+  deepForest;
+
+  String get label => switch (this) {
+    VaultThemeChoice.light => 'Clair vert',
+    VaultThemeChoice.greenNight => 'Vert nuit',
+    VaultThemeChoice.deepForest => 'Forêt profonde',
+  };
+}
+
 class VaultSettings {
   const VaultSettings({
     this.darkMode = false,
+    this.themeChoice = VaultThemeChoice.light,
     this.pinEnabled = false,
     this.passwordEnabled = false,
     this.localEncryption = true,
@@ -11,6 +24,7 @@ class VaultSettings {
   });
 
   final bool darkMode;
+  final VaultThemeChoice themeChoice;
   final bool pinEnabled;
   final bool passwordEnabled;
   final bool localEncryption;
@@ -21,6 +35,7 @@ class VaultSettings {
 
   Map<String, dynamic> toJson() => {
     'darkMode': darkMode,
+    'themeChoice': themeChoice.name,
     'pinEnabled': pinEnabled,
     'passwordEnabled': passwordEnabled,
     'localEncryption': localEncryption,
@@ -32,6 +47,7 @@ class VaultSettings {
 
   factory VaultSettings.fromJson(Map<String, dynamic> json) => VaultSettings(
     darkMode: json['darkMode'] as bool? ?? false,
+    themeChoice: _themeChoiceFromJson(json),
     pinEnabled: json['pinEnabled'] as bool? ?? false,
     passwordEnabled: json['passwordEnabled'] as bool? ?? false,
     localEncryption: json['localEncryption'] as bool? ?? true,
@@ -45,6 +61,7 @@ class VaultSettings {
 
   VaultSettings copyWith({
     bool? darkMode,
+    VaultThemeChoice? themeChoice,
     bool? pinEnabled,
     bool? passwordEnabled,
     bool? localEncryption,
@@ -54,6 +71,7 @@ class VaultSettings {
     String? authorName,
   }) => VaultSettings(
     darkMode: darkMode ?? this.darkMode,
+    themeChoice: themeChoice ?? this.themeChoice,
     pinEnabled: pinEnabled ?? this.pinEnabled,
     passwordEnabled: passwordEnabled ?? this.passwordEnabled,
     localEncryption: localEncryption ?? this.localEncryption,
@@ -62,4 +80,14 @@ class VaultSettings {
     lastExportAt: lastExportAt ?? this.lastExportAt,
     authorName: authorName ?? this.authorName,
   );
+
+  static VaultThemeChoice _themeChoiceFromJson(Map<String, dynamic> json) {
+    final stored = json['themeChoice'] as String?;
+    if (stored != null) {
+      return VaultThemeChoice.values.byName(stored);
+    }
+    return (json['darkMode'] as bool? ?? false)
+        ? VaultThemeChoice.greenNight
+        : VaultThemeChoice.light;
+  }
 }

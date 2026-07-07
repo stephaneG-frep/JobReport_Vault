@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/settings.dart';
 import '../providers/report_provider.dart';
 import '../providers/settings_provider.dart';
 
@@ -17,11 +18,38 @@ class SettingsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          SwitchListTile(
-            title: const Text('Mode sombre'),
-            value: settings.darkMode,
-            onChanged: (value) =>
-                provider.update(settings.copyWith(darkMode: value)),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Thème', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 12),
+                  SegmentedButton<VaultThemeChoice>(
+                    segments: VaultThemeChoice.values
+                        .map(
+                          (choice) => ButtonSegment(
+                            value: choice,
+                            label: Text(choice.label),
+                            icon: Icon(_themeIcon(choice)),
+                          ),
+                        )
+                        .toList(),
+                    selected: {settings.themeChoice},
+                    onSelectionChanged: (selection) {
+                      final choice = selection.first;
+                      provider.update(
+                        settings.copyWith(
+                          themeChoice: choice,
+                          darkMode: choice != VaultThemeChoice.light,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
           SwitchListTile(
             title: const Text('Code PIN'),
@@ -102,4 +130,10 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
+
+  IconData _themeIcon(VaultThemeChoice choice) => switch (choice) {
+    VaultThemeChoice.light => Icons.light_mode,
+    VaultThemeChoice.greenNight => Icons.dark_mode,
+    VaultThemeChoice.deepForest => Icons.forest,
+  };
 }
