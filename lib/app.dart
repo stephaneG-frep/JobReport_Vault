@@ -147,7 +147,7 @@ class _VaultShellState extends State<VaultShell> {
     NavigationDestination(
       icon: Icon(Icons.dashboard_outlined),
       selectedIcon: Icon(Icons.dashboard),
-      label: 'Dashboard',
+      label: 'Accueil',
     ),
     NavigationDestination(
       icon: Icon(Icons.article_outlined),
@@ -232,6 +232,8 @@ class _VaultShellState extends State<VaultShell> {
             selectedIndex: _mobileIndexes.contains(_index)
                 ? _mobileIndexes.indexOf(_index)
                 : 0,
+            labelBehavior:
+                NavigationDestinationLabelBehavior.onlyShowSelected,
             onDestinationSelected: (value) =>
                 setState(() => _index = _mobileIndexes[value]),
             destinations: _mobileIndexes
